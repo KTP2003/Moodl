@@ -30,9 +30,11 @@ export default function RootLayout({ children }) {
       <Link href={'/'}>
         <h1 className={'text-base sm:text-lg textGradient '+fugaz.className}>Moodl</h1>
       </Link>
-        <div className="flex items-center justify-between">
-          Placeholder CTA||Stats
-        </div>
+        <nav className="flex items-center gap-4 text-sm sm:text-base">
+          <Link href="/dashboard" className="text-indigo-600 hover:underline font-medium">
+            Dashboard
+          </Link>
+        </nav>
     </header>
   )
 

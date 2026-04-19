@@ -3,6 +3,7 @@ import { Fugaz_One } from 'next/font/google'
 import React,{ useEffect,useState } from 'react'
 import Calendar from './Calendar'
 import { useAuth } from '@/context/AuthContext'
+import { db } from '@/firebase'
 import { doc, setDoc } from 'firebase/firestore'
 import Loading from './Loading'
 import Login from './Login'
@@ -24,7 +25,7 @@ export default function Dashboard() {
     month
     year
     try {
-      const newData={ ...userDataObj }
+      const newData={ ...(userDataObj || {}) }
       if(!newData?.[year]){
         newData[year]={}
       }
@@ -32,7 +33,7 @@ export default function Dashboard() {
         newData[year][month]={}
       }
 
-      newData[year][month][date]=mood
+      newData[year][month][day]=mood
       //update the current state
       setData(newData)
       // update the global state
@@ -46,7 +47,6 @@ export default function Dashboard() {
           }
         }
       },{ merge:true })
-      
     } catch (err) {
       console.log("Failed to set data!:",err.message)
     }

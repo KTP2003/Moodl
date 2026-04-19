@@ -22,10 +22,13 @@ export default function Calendar(props) {
 
   console.log("Selected month:-",selectedMonth)
   const {demo,data,handleSetMood}=props
-  
-  const monthNow=new Date(selectedYear,Object.keys(months).indexOf(selectedMonth),1)
+
+  const monthIndex = Object.keys(months).indexOf(selectedMonth)
+  const monthSlice = demo ? null : (data?.[selectedYear]?.[monthIndex] ?? {})
+
+  const monthNow=new Date(selectedYear,monthIndex,1)
   const firstDayofMonth=monthNow.getDay() 
-  const daysInMonth=new Date(selectedYear,Object.keys(selectedMonth).indexOf(selectedMonth)+1,0).getDate()
+  const daysInMonth=new Date(selectedYear,monthIndex+1,0).getDate()
 
   const daysToDisplay=firstDayofMonth+daysInMonth
   const numRows=(Math.floor(daysToDisplay/7))+(daysToDisplay % 7 ? 1:0)
@@ -48,8 +51,8 @@ export default function Calendar(props) {
 
               let color=demo?
                 gradients.indigo[baseRating[dayIndex]]:
-                dayIndex in data?
-                  gradients.indigo[data[dayIndex]]:
+                dayIndex in monthSlice?
+                  gradients.indigo[monthSlice[dayIndex]]:
                   'white'
 
               return(
