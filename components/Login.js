@@ -6,6 +6,27 @@ import Button from './Button';
 import { useAuth } from '@/context/AuthContext';
 const fugaz = Fugaz_One({ subsets: ["latin"], weight: ['400'] });
 
+function getAuthErrorMessage(errorCode, isRegister) {
+    const authErrorMap = {
+        'auth/invalid-email': 'Please enter a valid email address.',
+        'auth/user-not-found': 'No account found with this email.',
+        'auth/wrong-password': 'Incorrect password. Please try again.',
+        'auth/invalid-credential': 'Email or password is incorrect.',
+        'auth/email-already-in-use': 'An account with this email already exists.',
+        'auth/weak-password': 'Password is too weak. Use at least 6 characters.',
+        'auth/too-many-requests': 'Too many attempts. Please wait a bit and try again.',
+        'auth/network-request-failed': 'Network issue. Check your internet connection and try again.'
+    }
+
+    if (authErrorMap[errorCode]) {
+        return authErrorMap[errorCode]
+    }
+
+    return isRegister
+        ? 'Could not create your account right now. Please try again.'
+        : 'Could not sign you in right now. Please try again.'
+}
+
 export default function Login() {
     const searchParams = useSearchParams()
     const [email, setEmail] = useState('')
@@ -13,6 +34,7 @@ export default function Login() {
     const [isRegister, setIsRegister] = useState(false)
     const [authenticating, setAuthenticating] = useState(false)
     const [formError, setFormError] = useState('')
+    const [formNotice, setFormNotice] = useState('')
 
     const { signup, login } = useAuth()
 
@@ -22,8 +44,18 @@ export default function Login() {
         if (mode === 'login') setIsRegister(false)
     }, [searchParams])
 
+    useEffect(() => {
+        const loggedOut = searchParams.get('loggedOut')
+        if (loggedOut === '1') {
+            setFormNotice("You've been logged out.")
+        } else {
+            setFormNotice('')
+        }
+    }, [searchParams])
+
     async function handleSubmit() {
         setFormError('')
+        setFormNotice('')
         if (!email?.trim() || !password) {
             setFormError('Please enter email and password.')
             return
@@ -43,8 +75,8 @@ export default function Login() {
             }
 
         } catch (err) {
-            console.log(err.message)
-            setFormError(err.message || 'Something went wrong. Try again.')
+            console.log('Auth error:', err?.code, err?.message)
+            setFormError(getAuthErrorMessage(err?.code, isRegister))
         } finally {
             setAuthenticating(false)
         }
@@ -68,6 +100,9 @@ export default function Login() {
             <input value={password} onChange={(e) => {
                 setPassword(e.target.value)
             }} className='w-full max-w-[400px] mx-auto px-3 duration-200 hover:border-indigo-600 focus:border-indigo-600 py-2 sm:py-3 border border-solid border-indigo-400 rounded-full outline-none' placeholder='Password (min 6 characters)' type='password' autoComplete={isRegister ? 'new-password' : 'current-password'} />
+            {formNotice ? (
+                <p className='w-full text-center text-sm text-indigo-600' role='status'>{formNotice}</p>
+            ) : null}
             {formError ? (
                 <p className='w-full text-center text-sm text-red-600' role='alert'>{formError}</p>
             ) : null}

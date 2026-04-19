@@ -1,8 +1,8 @@
-import Link from "next/link";
 import "./globals.css";
 import {Fugaz_One, Open_Sans} from "next/font/google";
 import { AuthProvider } from "@/context/AuthContext";
 import Head from "./head";
+import AppHeader from "@/components/AppHeader";
 
 // const geistSans = localFont({
 //   src: "./fonts/GeistVF.woff",
@@ -25,19 +25,6 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
-  const header=(
-    <header className="p-4 sm:p-8 items-center flex justify-between gap-4">
-      <Link href={'/'}>
-        <h1 className={'text-base sm:text-lg textGradient '+fugaz.className}>Moodl</h1>
-      </Link>
-        <nav className="flex items-center gap-4 text-sm sm:text-base">
-          <Link href="/dashboard" className="text-indigo-600 hover:underline font-medium">
-            Dashboard
-          </Link>
-        </nav>
-    </header>
-  )
-
   const footer=(
     <footer className="p-4 sm:p-8 grid place-items-center">
       <p className={'text-indigo-500 '+fugaz.className}>Created with LOVE</p>
@@ -49,7 +36,7 @@ export default function RootLayout({ children }) {
       <Head/>
       <AuthProvider>
       <body className={'w-full max-w-[1000px] mx-auto text-sm sm:text-base min-h-screen flex flex-col text-slate-800 '+opensans.className}>
-        {header}
+        <AppHeader />
         {children}
         {footer}
       </body>
